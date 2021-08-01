@@ -26,34 +26,37 @@
 #include "FreeRTOS.h"
 #include "event_groups.h"
 
+#include "mbconfig.h"
+
+#if MB_MASTER_RTU_ENABLED > 0
 /* ----------------------- Variables ----------------------------------------*/
-static EventGroupHandle_t xSlaveOsEvent_h;
-static StaticEventGroup_t xSlaveOsEventGroup;
+static EventGroupHandle_t xMasterOsEvent_h;
+static StaticEventGroup_t xMasterOsEventGroup;
 
 /* ----------------------- Start implementation -----------------------------*/
 BOOL
-xMBPortEventInit( void )
+xMBMasterPortEventInit( void )
 {
-    xSlaveOsEvent_h = xEventGroupCreateStatic( &xSlaveOsEventGroup );
+    xMasterOsEvent_h = xEventGroupCreateStatic( &xMasterOsEventGroup );
 
     return TRUE;
 }
 
 BOOL
-xMBPortEventPost( eMBEventType eEvent )
+xMBMasterPortEventPost( eMBMasterEventType eEvent )
 {
-    xEventGroupSetBits(&xSlaveOsEventGroup, eEvent);
+    xEventGroupSetBits(xMasterOsEvent_h, eEvent);
     return TRUE;
 }
 
 BOOL
-xMBPortEventGet( eMBEventType * eEvent )
+xMBMasterPortEventGet( eMBMasterEventType * eEvent )
 {
     EventBits_t uxBits;
     const TickType_t xTicksToWait = 100 / portTICK_PERIOD_MS;
 
     /* waiting forever OS event */
-    uxBits  = xEventGroupWaitBits(&xSlaveOsEventGroup,
+    uxBits  = xEventGroupWaitBits(xMasterOsEvent_h,
             EV_READY | EV_FRAME_RECEIVED | EV_EXECUTE | EV_FRAME_SENT,
             pdTRUE,
             pdFALSE,
@@ -70,6 +73,8 @@ xMBPortEventGet( eMBEventType * eEvent )
     }else {
 
     }
-    
+
     return TRUE;
 }
+
+#endif

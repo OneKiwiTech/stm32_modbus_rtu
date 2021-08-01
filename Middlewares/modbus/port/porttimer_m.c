@@ -25,7 +25,10 @@
 /* ----------------------- Modbus includes ----------------------------------*/
 #include "mb.h"
 #include "mbport.h"
- 
+
+#include "mbconfig.h"
+
+#if MB_MASTER_RTU_ENABLED
 /* ----------------------- static functions ---------------------------------*/
 //static void prvvTIMERExpiredISR( void );
  
@@ -36,7 +39,7 @@ extern uint16_t downcounter;
  
 /* ----------------------- Start implementation -----------------------------*/
 BOOL
-xMBPortTimersInit( USHORT usTim1Timerout50us )
+xMBMasterPortTimersInit( USHORT usTim1Timerout50us )
 {
   TIM_MasterConfigTypeDef sMasterConfig;
   
@@ -64,7 +67,7 @@ xMBPortTimersInit( USHORT usTim1Timerout50us )
  
  
 void
-vMBPortTimersEnable(  )
+vMBMasterPortTimersEnable(  )
 {
   /* Enable the timer with the timeout passed to xMBPortTimersInit( ) */
   downcounter = timeout;
@@ -72,7 +75,7 @@ vMBPortTimersEnable(  )
 }
  
 void
-vMBPortTimersDisable(  )
+vMBMasterPortTimersDisable(  )
 {
   /* Disable any pending timers. */
   HAL_TIM_Base_Stop_IT(&htim7);
@@ -87,3 +90,5 @@ static void prvvTIMERExpiredISR( void )
 ( void )pxMBPortCBTimerExpired(  );
 }
 */
+
+#endif /* MB_MASTER_RTU_ENABLED */

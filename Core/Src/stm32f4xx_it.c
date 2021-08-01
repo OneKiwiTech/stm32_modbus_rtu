@@ -64,7 +64,8 @@ extern TIM_HandleTypeDef htim7;
 extern DMA_HandleTypeDef hdma_usart2_tx;
 extern UART_HandleTypeDef huart2;
 extern TIM_HandleTypeDef htim6;
-
+uint16_t timeout = 0;
+uint16_t downcounter = 0;
 /* USER CODE BEGIN EV */
 
 /* USER CODE END EV */
