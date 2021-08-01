@@ -43,6 +43,7 @@
 
 #include "mbcrc.h"
 #include "mbport.h"
+#include "mbconfig.h"
 
 #if MB_MASTER_RTU_ENABLED > 0
 /* ----------------------- Defines ------------------------------------------*/

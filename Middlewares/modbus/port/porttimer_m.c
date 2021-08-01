@@ -65,7 +65,11 @@ xMBMasterPortTimersInit( USHORT usTim1Timerout50us )
   return TRUE;
 }
  
- 
+void vMBMasterPortTimersT35Enable()
+{
+
+}
+
 void
 vMBMasterPortTimersEnable(  )
 {

@@ -1,11 +1,17 @@
 #include "stm32f4xx_hal.h"
 #include "cmsis_os.h"
 
-#include "mb.h"
-#include "mbport.h"
 #include "main.h"
 
-#if MB_MASTER_RTU_ENABLED
+/* ----------------------- Modbus includes ----------------------------------*/
+#include "mb.h"
+#include "mb_m.h"
+#include "mbconfig.h"
+#include "mbport.h"
+#include "mbframe.h"
+#include "mbutils.h"
+
+#if MB_MASTER_RTU_ENABLED > 0
 /* -----------------------Master Defines -------------------------------------*/
 #define M_DISCRETE_INPUT_START        0
 #define M_DISCRETE_INPUT_NDISCRETES   16
@@ -27,18 +33,11 @@
 USHORT  usModbusUserData[MB_PDU_SIZE_MAX];
 UCHAR   ucModbusUserData[MB_PDU_SIZE_MAX];
 
-void ModbusRTUTask(void const * argument)
-{ 
-  eMBMasterInit(MB_RTU, 1, 19200,  MB_PAR_NONE);
-  eMBMasterEnable();
-  while(1) {
-    eMBMasterPoll();          
-  }
-}
-
 
 void ModbusMasterRTUTask(void const * argument)
 { 
+  eMBMasterReqErrCode    errorCode = MB_MRE_NO_ERR;
+
   eMBMasterInit(MB_RTU, 1, 19200,  MB_PAR_NONE);
   eMBMasterEnable();
   while(1) {
