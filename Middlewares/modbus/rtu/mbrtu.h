@@ -31,6 +31,8 @@
 #ifndef _MB_RTU_H
 #define _MB_RTU_H
 
+#define  MB_TX_DMA_COMPLETE_EVT   	1
+
 #ifdef __cplusplus
 PR_BEGIN_EXTERN_C
 #endif

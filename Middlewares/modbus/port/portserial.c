@@ -73,6 +73,15 @@ xMBPortSerialPutByte( CHAR ucByte )
 }
  
 BOOL
+xMBPortSerialSendBuffer( CHAR* ucBytePtr, ULONG ulBufferLen )
+{
+  /* Put a byte in the UARTs transmit buffer. This function is called
+  * by the protocol stack if pxMBFrameCBTransmitterEmpty( ) has been
+  * called. */
+  return (HAL_OK == HAL_UART_Transmit_DMA(&huart2, (uint8_t*)ucBytePtr, ulBufferLen));
+}
+
+BOOL
 xMBPortSerialGetByte( CHAR * pucByte )
 {
   /* Return the byte in the UARTs receive buffer. This function is called

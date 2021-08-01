@@ -65,7 +65,7 @@ void StartDefaultTask(void const * argument);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+osThreadId  mbPollTask_h;
 /* USER CODE END 0 */
 
 /**
@@ -127,7 +127,7 @@ int main(void)
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
   osThreadDef(ModbusRTUTask, ModbusRTUTask, osPriorityNormal, 0, configMINIMAL_STACK_SIZE + 128);
-  osThreadCreate(osThread(ModbusRTUTask), NULL); 
+  mbPollTask_h = osThreadCreate(osThread(ModbusRTUTask), NULL);
   /* USER CODE END RTOS_THREADS */
 
   /* Start scheduler */

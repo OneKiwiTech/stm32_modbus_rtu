@@ -76,6 +76,7 @@ static volatile USHORT usSndBufferCount;
 
 static volatile USHORT usRcvBufferPos;
 
+volatile uint8_t  txDmaDone = 0;
 /* ----------------------- Start implementation -----------------------------*/
 eMBErrorCode
 eMBRTUInit( UCHAR ucSlaveAddress, UCHAR ucPort, ULONG ulBaudRate, eMBParity eParity )
@@ -303,6 +304,16 @@ xMBRTUTransmitFSM( void )
         break;
 
     case STATE_TX_XMIT:
+#if MB_RTU_USE_DMA > 0 
+        xMBPortSerialSendBuffer(( CHAR )*pucSndBufferCur, usSndBufferCount);
+        osSignalWait(MB_TX_DMA_COMPLETE_EVT, osWaitForever);
+        
+        xNeedPoll = xMBPortEventPost( EV_FRAME_SENT );
+        /* Disable transmitter. This prevents another transmit buffer
+         * empty interrupt. */
+        vMBPortSerialEnable( TRUE, FALSE );
+        eSndState = STATE_TX_IDLE;     
+#else 
         /* check if we are finished. */
         if( usSndBufferCount != 0 )
         {
@@ -318,6 +329,7 @@ xMBRTUTransmitFSM( void )
             vMBPortSerialEnable( TRUE, FALSE );
             eSndState = STATE_TX_IDLE;
         }
+#endif /* MB_RTU_USE_DMA */        
         break;
     }
 

@@ -115,6 +115,8 @@ INLINE BOOL     xMBPortSerialGetByte( CHAR * pucByte );
 
 INLINE BOOL     xMBPortSerialPutByte( CHAR ucByte );
 
+BOOL            xMBPortSerialSendBuffer( CHAR* ucBytePtr, ULONG ulBufferLen );
+
 BOOL            xMBMasterPortSerialInit( UCHAR ucPort, ULONG ulBaudRate,
                                    UCHAR ucDataBits, eMBParity eParity );
 

@@ -25,6 +25,10 @@
 /* USER CODE BEGIN Includes */
 #include "mb.h"
 #include "mbport.h"
+#include "mbrtu.h"
+
+#include "cmsis_os.h"
+
 extern uint16_t downcounter;
 
 /* USER CODE END Includes */
@@ -66,6 +70,7 @@ extern UART_HandleTypeDef huart2;
 extern TIM_HandleTypeDef htim6;
 uint16_t timeout = 0;
 uint16_t downcounter = 0;
+extern osThreadId mbPollTask_h;
 /* USER CODE BEGIN EV */
 
 /* USER CODE END EV */
@@ -174,6 +179,13 @@ void DebugMon_Handler(void)
 void DMA1_Stream6_IRQHandler(void)
 {
   /* USER CODE BEGIN DMA1_Stream6_IRQn 0 */
+ // uint32_t tmp_flag = 0;//__HAL_DMA_GET_FLAG(&hdma_usart2_tx, DMA_FLAG_TCIF1_6);
+  uint32_t tmp_it_source = __HAL_DMA_GET_IT_SOURCE(&hdma_usart2_tx, DMA_IT_TC);
+
+  if((tmp_it_source != RESET)) {
+	  osSignalSet(mbPollTask_h, MB_TX_DMA_COMPLETE_EVT);
+	//  __HAL_DMA_CLEAR_FLAG(&hdma_usart2_tx, DMA_FLAG_TCIF1_6);
+  }
 
   /* USER CODE END DMA1_Stream6_IRQn 0 */
   HAL_DMA_IRQHandler(&hdma_usart2_tx);
