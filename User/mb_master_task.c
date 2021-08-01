@@ -34,12 +34,9 @@ USHORT  usModbusUserData[MB_PDU_SIZE_MAX];
 UCHAR   ucModbusUserData[MB_PDU_SIZE_MAX];
 
 
-void ModbusMasterRTUTask(void const * argument)
+void ModbusMasterUserRTUTask(void const * argument)
 { 
-  eMBMasterReqErrCode    errorCode = MB_MRE_NO_ERR;
-
-  eMBMasterInit(MB_RTU, 1, 19200,  MB_PAR_NONE);
-  eMBMasterEnable();
+  //TODO: waiting Modbus Master Task Started
   while(1) {
     usModbusUserData[0] = (USHORT)(1);
     usModbusUserData[1] = (USHORT)(2);
@@ -48,6 +45,16 @@ void ModbusMasterRTUTask(void const * argument)
   }
 }
 
+
+void ModbusMasterRTUTask(void const * argument)
+{
+  eMBMasterReqErrCode    errorCode = MB_MRE_NO_ERR;
+  eMBMasterInit(MB_RTU, 1, 19200,  MB_PAR_NONE);
+  eMBMasterEnable();
+  while(1) {
+	  eMBMasterPoll();
+  }
+}
 
 /*-----------------------Master mode use these variables----------------------*/
 #if MB_MASTER_RTU_ENABLED > 0 || MB_MASTER_ASCII_ENABLED > 0

@@ -51,4 +51,6 @@ typedef int32_t LONG;
 #define FALSE           0
 #endif
 
+#define  MB_RTU_USE_DMA    ( 1 )
+
 #endif

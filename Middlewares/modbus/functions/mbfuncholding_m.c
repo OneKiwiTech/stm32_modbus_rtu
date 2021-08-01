@@ -109,8 +109,8 @@ eMBMasterReqWriteHoldingRegister( UCHAR ucSndAddr, USHORT usRegAddr, USHORT usRe
         vMBMasterGetPDUSndBuf(&ucMBFrame);
         vMBMasterSetDestAddress(ucSndAddr);
         ucMBFrame[MB_PDU_FUNC_OFF]                = MB_FUNC_WRITE_REGISTER;
-        ucMBFrame[MB_PDU_REQ_WRITE_ADDR_OFF]      = usRegAddr >> 8;
-        ucMBFrame[MB_PDU_REQ_WRITE_ADDR_OFF + 1]  = usRegAddr;
+        ucMBFrame[MB_PDU_REQ_WRITE_ADDR_OFF]      = usRegAddr >> 8; // MSB Byte
+        ucMBFrame[MB_PDU_REQ_WRITE_ADDR_OFF + 1]  = usRegAddr && 0xFF; // LSB Byte
         ucMBFrame[MB_PDU_REQ_WRITE_VALUE_OFF]     = usRegData >> 8;
         ucMBFrame[MB_PDU_REQ_WRITE_VALUE_OFF + 1] = usRegData ;
         vMBMasterSetPDUSndLength( MB_PDU_SIZE_MIN + MB_PDU_REQ_WRITE_SIZE );

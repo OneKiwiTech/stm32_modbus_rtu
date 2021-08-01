@@ -34,7 +34,7 @@
 
 /* ----------------------- Platform includes --------------------------------*/
 #include "port.h"
-
+#include "cmsis_os.h"
 /* ----------------------- Modbus includes ----------------------------------*/
 #include "mb.h"
 #include "mbrtu.h"
