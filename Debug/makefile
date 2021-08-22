@@ -70,8 +70,8 @@ all: main-build
 main-build: modbus_rs485.elf secondary-outputs
 
 # Tool invocations
-modbus_rs485.elf: $(OBJS) $(USER_OBJS) C:\Users\Lenovo\STM32CubeIDE\workspace_1.7.0\modbus_rs485\STM32F407VGTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "modbus_rs485.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\Lenovo\STM32CubeIDE\workspace_1.7.0\modbus_rs485\STM32F407VGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="modbus_rs485.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+modbus_rs485.elf: $(OBJS) $(USER_OBJS) C:\Users\Lenovo\STM32CubeIDE\workspace_1.7.0\modbus_rs485\stm32_modbus_rtu\STM32F407VGTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "modbus_rs485.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\Lenovo\STM32CubeIDE\workspace_1.7.0\modbus_rs485\stm32_modbus_rtu\STM32F407VGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="modbus_rs485.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 

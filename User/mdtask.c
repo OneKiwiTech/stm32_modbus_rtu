@@ -8,10 +8,12 @@
 #define REG_INPUT_START 1000
 #define REG_INPUT_NREGS 8
 
+#if MB_SLAVE_RTU_ENABLED > 0
+
 static USHORT usRegInputStart = REG_INPUT_START;
 static USHORT usRegInputBuf[REG_INPUT_NREGS];
 
-void ModbusRTUTask(void const * argument)
+void ModbusSlaveRTUTask(void const * argument)
 { 
   /* ABCDEF */
   usRegInputBuf[0] = 11;
@@ -82,3 +84,5 @@ eMBRegDiscreteCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNDiscrete )
 {
     return MB_ENOREG;
 }
+
+#endif /* MB_SLAVE_RTU_ENABLED */

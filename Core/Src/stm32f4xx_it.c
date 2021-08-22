@@ -29,8 +29,6 @@
 
 #include "cmsis_os.h"
 
-extern uint16_t downcounter;
-
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -68,11 +66,9 @@ extern TIM_HandleTypeDef htim7;
 extern DMA_HandleTypeDef hdma_usart2_tx;
 extern UART_HandleTypeDef huart2;
 extern TIM_HandleTypeDef htim6;
-uint16_t timeout = 0;
-uint16_t downcounter = 0;
-extern osThreadId mbPollTask_h;
-/* USER CODE BEGIN EV */
 
+/* USER CODE BEGIN EV */
+extern volatile USHORT usT35TimeOut50us;
 /* USER CODE END EV */
 
 /******************************************************************************/
@@ -183,8 +179,7 @@ void DMA1_Stream6_IRQHandler(void)
   uint32_t tmp_it_source = __HAL_DMA_GET_IT_SOURCE(&hdma_usart2_tx, DMA_IT_TC);
 
   if((tmp_it_source != RESET)) {
-	  osSignalSet(mbPollTask_h, MB_TX_DMA_COMPLETE_EVT);
-	//  __HAL_DMA_CLEAR_FLAG(&hdma_usart2_tx, DMA_FLAG_TCIF1_6);
+//	  osSignalSet(mbPollTask_h, MB_TX_DMA_COMPLETE_EVT);
   }
 
   /* USER CODE END DMA1_Stream6_IRQn 0 */
@@ -204,13 +199,23 @@ void USART2_IRQHandler(void)
   uint32_t tmp_it_source = __HAL_UART_GET_IT_SOURCE(&huart2, UART_IT_RXNE);
   
   if((tmp_flag != RESET) && (tmp_it_source != RESET)) {
+#if MB_SLAVE_RTU_ENABLED > 0
     pxMBFrameCBByteReceived();
+#endif /* MB_SLAVE_RTU_ENABLED */
+#if MB_MASTER_RTU_ENABLED > 0
+    pxMBMasterFrameCBByteReceived();
+#endif /* MB_MASTER_RTU_ENABLED */
     __HAL_UART_CLEAR_PEFLAG(&huart2);    
     return;
   }
   
   if((__HAL_UART_GET_FLAG(&huart2, UART_FLAG_TXE) != RESET) &&(__HAL_UART_GET_IT_SOURCE(&huart2, UART_IT_TXE) != RESET)) {
+#if MB_SLAVE_RTU_ENABLED > 0
     pxMBFrameCBTransmitterEmpty();    
+#endif /* MB_SLAVE_RTU_ENABLED */
+#if MB_MASTER_RTU_ENABLED > 0
+    pxMBMasterFrameCBTransmitterEmpty();
+#endif /* MB_MASTER_RTU_ENABLED */
     return ;
   }
   /* USER CODE END USART2_IRQn 0 */
@@ -242,8 +247,17 @@ void TIM7_IRQHandler(void)
   /* USER CODE BEGIN TIM7_IRQn 0 */
   if(__HAL_TIM_GET_FLAG(&htim7, TIM_FLAG_UPDATE) != RESET && __HAL_TIM_GET_IT_SOURCE(&htim7, TIM_IT_UPDATE) !=RESET) {
     __HAL_TIM_CLEAR_IT(&htim7, TIM_IT_UPDATE);
-    if (!--downcounter)
+    if (usT35TimeOut50us == 0)
+    {
+#if MB_SLAVE_RTU_ENABLED > 0
       pxMBPortCBTimerExpired();
+#endif
+#if MB_MASTER_RTU_ENABLED > 0
+      pxMBMasterPortCBTimerExpired();
+#endif
+    }else {
+    	usT35TimeOut50us--;
+    }
   }
 
   /* USER CODE END TIM7_IRQn 0 */

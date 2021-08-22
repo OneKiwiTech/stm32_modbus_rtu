@@ -23,6 +23,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "mbconfig.h"
 
 /* USER CODE END Includes */
 
@@ -48,7 +49,18 @@ DMA_HandleTypeDef hdma_usart2_tx;
 
 osThreadId defaultTaskHandle;
 /* USER CODE BEGIN PV */
-extern void ModbusRTUTask(void const * argument);
+#if MB_SLAVE_RTU_ENABLED > 0
+osThreadId  mbSlavePollTask_h;
+extern void ModbusSlaveRTUTask(void const * argument);
+#endif /* MB_SLAVE_RTU_ENABLED */
+
+#if MB_MASTER_RTU_ENABLED > 0
+osThreadId mbMasterPollTask_h;
+osThreadId mbMasterUserTask_h;
+extern void ModbusMasterUserRTUTask(void const * argument);
+extern void ModbusMasterRTUTask(void const * argument);
+extern void ModbusMasterStackInit(void);
+#endif
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -126,8 +138,20 @@ int main(void)
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
-  osThreadDef(ModbusRTUTask, ModbusRTUTask, osPriorityNormal, 0, configMINIMAL_STACK_SIZE + 128);
-  mbPollTask_h = osThreadCreate(osThread(ModbusRTUTask), NULL);
+#if MB_SLAVE_RTU_ENABLED > 0
+  osThreadDef(ModbusRTUTask, ModbusSlaveRTUTask, osPriorityNormal, 0, configMINIMAL_STACK_SIZE + 128);
+  mbSlavePollTask_h = osThreadCreate(osThread(ModbusRTUTask), NULL);
+#endif
+
+#if MB_MASTER_RTU_ENABLED > 0
+  ModbusMasterStackInit();
+  osThreadDef(mbMasterTask, ModbusMasterRTUTask, osPriorityNormal + 1, 0, configMINIMAL_STACK_SIZE + 128);
+  mbMasterPollTask_h = osThreadCreate(osThread(mbMasterTask), NULL);
+
+  osThreadDef(mbMasterUserTask, ModbusMasterUserRTUTask, osPriorityNormal, 0, configMINIMAL_STACK_SIZE + 128);
+  mbMasterUserTask_h = osThreadCreate(osThread(mbMasterUserTask), NULL);
+#endif /* MB_MASTER_RTU_ENABLED */
+
   /* USER CODE END RTOS_THREADS */
 
   /* Start scheduler */

@@ -1,0 +1,1 @@
+.\diagslave.exe -b 19200 -p none -d 8 -m rtu  -a 1 COM4

@@ -24,13 +24,14 @@
 
 #include <assert.h>
 #include "stm32f4xx_hal.h"
+#include "FreeRTOS.h"
 
 #define	INLINE                      inline
 #define PR_BEGIN_EXTERN_C           extern "C" {
 #define	PR_END_EXTERN_C             }
 
-#define ENTER_CRITICAL_SECTION() ( __disable_irq())      
-#define EXIT_CRITICAL_SECTION() ( __enable_irq())    
+#define ENTER_CRITICAL_SECTION() ( portENTER_CRITICAL())      
+#define EXIT_CRITICAL_SECTION() ( portEXIT_CRITICAL())    
 
 typedef uint8_t BOOL;
 
@@ -51,6 +52,6 @@ typedef int32_t LONG;
 #define FALSE           0
 #endif
 
-#define  MB_RTU_USE_DMA    ( 1 )
+#define  MB_RTU_USE_DMA    ( 0 )
 
 #endif

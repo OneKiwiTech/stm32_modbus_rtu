@@ -56,7 +56,7 @@
 #ifndef MB_PORT_HAS_CLOSE
 #define MB_PORT_HAS_CLOSE 0
 #endif
-
+#if MB_SLAVE_RTU_ENABLED > 0
 /* ----------------------- Static variables ---------------------------------*/
 
 static UCHAR    ucMBAddress;
@@ -224,6 +224,8 @@ eMBTCPInit( USHORT ucTCPPort )
     return eStatus;
 }
 #endif
+
+#define MBFuncCodeHanler(x)           MyUserFuncHandler(x)
 
 eMBErrorCode
 eMBRegisterCB( UCHAR ucFunctionCode, pxMBFunctionHandler pxHandler )
@@ -408,3 +410,5 @@ eMBErrorCode eMBPoll( void )
     }
     return MB_ENOERR;
 }
+
+#endif /* MB_SLAVE_RTU_ENABLED */

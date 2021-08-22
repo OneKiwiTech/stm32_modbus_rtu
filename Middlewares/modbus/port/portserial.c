@@ -24,7 +24,8 @@
 /* ----------------------- Modbus includes ----------------------------------*/
 #include "mb.h"
 #include "mbport.h"
- 
+
+#if MB_SLAVE_RTU_ENABLED > 0
 /* ----------------------- static functions ---------------------------------*/
 //static void prvvUARTTxReadyISR( void );
 //static void prvvUARTRxISR( void );
@@ -113,3 +114,5 @@ static void prvvUARTRxISR( void )
 pxMBFrameCBByteReceived(  );
 }
 */
+
+#endif /* MB_SLAVE_RTU_ENABLED */

@@ -36,6 +36,7 @@ PR_BEGIN_EXTERN_C
 #endif
 
 /* ----------------------- Defines ------------------------------------------*/
+#include "mbconfig.h"
 
 /* ----------------------- Type definitions ---------------------------------*/
 
@@ -82,23 +83,14 @@ typedef enum
 } eMBParity;
 
 /* ----------------------- Supporting functions -----------------------------*/
+#if MB_SLAVE_RTU_ENABLED > 0
 BOOL            xMBPortEventInit( void );
 
 BOOL            xMBPortEventPost( eMBEventType eEvent );
 
 BOOL            xMBPortEventGet(  /*@out@ */ eMBEventType * eEvent );
 
-BOOL            xMBMasterPortEventInit( void );
 
-BOOL            xMBMasterPortEventPost( eMBMasterEventType eEvent );
-
-BOOL            xMBMasterPortEventGet(  /*@out@ */ eMBMasterEventType * eEvent );
-
-void            vMBMasterOsResInit( void );
-
-BOOL            xMBMasterRunResTake( int32_t time );
-
-void            vMBMasterRunResRelease( void );
 
 /* ----------------------- Serial port functions ----------------------------*/
 
@@ -111,12 +103,14 @@ void            xMBPortSerialClose( void );
 
 void            vMBPortSerialEnable( BOOL xRxEnable, BOOL xTxEnable );
 
-INLINE BOOL     xMBPortSerialGetByte( CHAR * pucByte );
+BOOL     		xMBPortSerialGetByte( CHAR * pucByte );
 
-INLINE BOOL     xMBPortSerialPutByte( CHAR ucByte );
+BOOL    		xMBPortSerialPutByte( CHAR ucByte );
 
 BOOL            xMBPortSerialSendBuffer( CHAR* ucBytePtr, ULONG ulBufferLen );
+#endif  /* MB_SLAVE_RTU_ENABLED */
 
+#if MB_MASTER_RTU_ENABLED > 0
 BOOL            xMBMasterPortSerialInit( UCHAR ucPort, ULONG ulBaudRate,
                                    UCHAR ucDataBits, eMBParity eParity );
 
@@ -126,30 +120,45 @@ void            xMBMasterPortSerialClose( void );
 
 void            vMBMasterPortSerialEnable( BOOL xRxEnable, BOOL xTxEnable );
 
-INLINE BOOL     xMBMasterPortSerialGetByte( CHAR * pucByte );
+BOOL     		xMBMasterPortSerialGetByte( CHAR * pucByte );
+BOOL    		xMBMasterPortSerialPutByte( CHAR ucByte );
 
-INLINE BOOL     xMBMasterPortSerialPutByte( CHAR ucByte );
+BOOL            xMBMasterPortEventInit( void );
+
+BOOL            xMBMasterPortEventPost( eMBMasterEventType eEvent );
+
+BOOL            xMBMasterPortEventGet(  /*@out@ */ eMBMasterEventType * eEvent );
+
+void            vMBMasterOsResInit( void );
+
+BOOL            xMBMasterRunResTake( int32_t time );
+
+void            vMBMasterRunResRelease( void );
+#endif /* MB_MASTER_RTU_ENABLED */
 
 /* ----------------------- Timers functions ---------------------------------*/
+#if MB_SLAVE_RTU_ENABLED > 0
 BOOL            xMBPortTimersInit( USHORT usTimeOut50us );
 
 void            xMBPortTimersClose( void );
 
-INLINE void     vMBPortTimersEnable( void );
+void     		vMBPortTimersEnable( void );
 
-INLINE void     vMBPortTimersDisable( void );
+void     		vMBPortTimersDisable( void );
+#endif /* MB_SLAVE_RTU_ENABLED */
 
-BOOL            xMBMasterPortTimersInit( USHORT usTimeOut50us );
+#if MB_MASTER_RTU_ENABLED > 0
+BOOL     xMBMasterPortTimersInit( USHORT usTimeOut50us );
 
-void            xMBMasterPortTimersClose( void );
+void     xMBMasterPortTimersClose( void );
 
-INLINE void     vMBMasterPortTimersT35Enable( void );
+void     vMBMasterPortTimersT35Enable( void );
 
-INLINE void     vMBMasterPortTimersConvertDelayEnable( void );
+void     vMBMasterPortTimersConvertDelayEnable( void );
 
-INLINE void     vMBMasterPortTimersRespondTimeoutEnable( void );
+void     vMBMasterPortTimersRespondTimeoutEnable( void );
 
-INLINE void     vMBMasterPortTimersDisable( void );
+void     vMBMasterPortTimersDisable( void );
 
 /* ----------------- Callback for the master error process ------------------*/
 void            vMBMasterErrorCBRespondTimeout( UCHAR ucDestAddress, const UCHAR* pucPDUData,
@@ -162,7 +171,7 @@ void            vMBMasterErrorCBExecuteFunction( UCHAR ucDestAddress, const UCHA
                                                  USHORT ucPDULength );
 
 void            vMBMasterCBRequestScuuess( void );
-
+#endif /* MB_MASTER_RTU_ENABLED */
 /* ----------------------- Callback for the protocol stack ------------------*/
 
 /*!
@@ -188,17 +197,6 @@ extern          BOOL( *pxMBMasterFrameCBByteReceived ) ( void );
 extern          BOOL( *pxMBMasterFrameCBTransmitterEmpty ) ( void );
 
 extern          BOOL( *pxMBMasterPortCBTimerExpired ) ( void );
-
-/* ----------------------- TCP port functions -------------------------------*/
-BOOL            xMBTCPPortInit( USHORT usTCPPort );
-
-void            vMBTCPPortClose( void );
-
-void            vMBTCPPortDisable( void );
-
-BOOL            xMBTCPPortGetRequest( UCHAR **ppucMBTCPFrame, USHORT * usTCPLength );
-
-BOOL            xMBTCPPortSendResponse( const UCHAR *pucMBTCPFrame, USHORT usTCPLength );
 
 #ifdef __cplusplus
 PR_END_EXTERN_C

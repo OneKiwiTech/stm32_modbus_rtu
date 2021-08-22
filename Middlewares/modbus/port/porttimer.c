@@ -28,11 +28,10 @@
  
 /* ----------------------- static functions ---------------------------------*/
 //static void prvvTIMERExpiredISR( void );
- 
+#if MB_SLAVE_RTU_ENABLED > 0
 /* -----------------------    variables     ---------------------------------*/
 extern TIM_HandleTypeDef htim7;
-extern uint16_t timeout;
-extern uint16_t downcounter;
+volatile USHORT usT35TimeOut50us;
  
 /* ----------------------- Start implementation -----------------------------*/
 BOOL
@@ -45,7 +44,7 @@ xMBPortTimersInit( USHORT usTim1Timerout50us )
   htim7.Init.CounterMode = TIM_COUNTERMODE_UP;
   htim7.Init.Period = 50 - 1;
   
-  timeout = usTim1Timerout50us;
+  usT35TimeOut50us = usTim1Timerout50us;
   
   if (HAL_TIM_Base_Init(&htim7) != HAL_OK)
   {
@@ -67,7 +66,6 @@ void
 vMBPortTimersEnable(  )
 {
   /* Enable the timer with the timeout passed to xMBPortTimersInit( ) */
-  downcounter = timeout;
   HAL_TIM_Base_Start_IT(&htim7);
 }
  
@@ -87,3 +85,5 @@ static void prvvTIMERExpiredISR( void )
 ( void )pxMBPortCBTimerExpired(  );
 }
 */
+
+#endif /* MB_SLAVE_RTU_ENABLED */

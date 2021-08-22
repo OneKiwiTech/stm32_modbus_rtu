@@ -21,6 +21,7 @@
 #define M_REG_INPUT_NREGS             100
 #define M_REG_HOLDING_START           0
 #define M_REG_HOLDING_NREGS           100
+
 /* master mode: holding register's all address */
 #define          M_HD_RESERVE                     0
 /* master mode: input register's all address */
@@ -33,31 +34,39 @@
 USHORT  usModbusUserData[MB_PDU_SIZE_MAX];
 UCHAR   ucModbusUserData[MB_PDU_SIZE_MAX];
 
+void ModbusMasterStackInit(void)
+{
+
+	eMBMasterInit(MB_RTU, 1, 19200,  MB_PAR_NONE);
+	eMBMasterEnable();
+}
 
 void ModbusMasterUserRTUTask(void const * argument)
 { 
-  //TODO: waiting Modbus Master Task Started
+  eMBMasterReqErrCode    errorCode = MB_MRE_NO_ERR;
+  uint16_t errorCount = 0;
+
   while(1) {
+	osDelay(1000);
     usModbusUserData[0] = (USHORT)(1);
     usModbusUserData[1] = (USHORT)(2);
     ucModbusUserData[0] = 0x1F;    
-    errorCode = eMBMasterReqWriteHoldingRegister(1, 3, usModbusUserData[0], 0x00);         
+    errorCode = eMBMasterReqWriteHoldingRegister(1, 3, usModbusUserData[0], 0x00);
+    if (errorCode != MB_MRE_NO_ERR) {
+        errorCount++;
+    }
   }
 }
 
-
 void ModbusMasterRTUTask(void const * argument)
 {
-  eMBMasterReqErrCode    errorCode = MB_MRE_NO_ERR;
-  eMBMasterInit(MB_RTU, 1, 19200,  MB_PAR_NONE);
-  eMBMasterEnable();
+
   while(1) {
 	  eMBMasterPoll();
   }
 }
 
 /*-----------------------Master mode use these variables----------------------*/
-#if MB_MASTER_RTU_ENABLED > 0 || MB_MASTER_ASCII_ENABLED > 0
 //Master mode:DiscreteInputs variables
 USHORT   usMDiscInStart                             = M_DISCRETE_INPUT_START;
 #if      M_DISCRETE_INPUT_NDISCRETES%8
@@ -327,6 +336,6 @@ eMBErrorCode eMBMasterRegDiscreteCB( UCHAR * pucRegBuffer, USHORT usAddress, USH
 
     return eStatus;
 }
-#endif
+
 
 #endif /* MB_MASTER_RTU_ENABLED */

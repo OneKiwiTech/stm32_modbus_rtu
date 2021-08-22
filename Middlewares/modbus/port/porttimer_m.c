@@ -25,30 +25,28 @@
 /* ----------------------- Modbus includes ----------------------------------*/
 #include "mb.h"
 #include "mbport.h"
-
+#include "mb_m.h"
 #include "mbconfig.h"
 
-#if MB_MASTER_RTU_ENABLED
+#if MB_MASTER_RTU_ENABLED > 0
 /* ----------------------- static functions ---------------------------------*/
 //static void prvvTIMERExpiredISR( void );
- 
+
 /* -----------------------    variables     ---------------------------------*/
 extern TIM_HandleTypeDef htim7;
-extern uint16_t timeout;
-extern uint16_t downcounter;
- 
+volatile USHORT usT35TimeOut50us = 0;
 /* ----------------------- Start implementation -----------------------------*/
 BOOL
 xMBMasterPortTimersInit( USHORT usTim1Timerout50us )
 {
   TIM_MasterConfigTypeDef sMasterConfig;
   
+  usT35TimeOut50us = usTim1Timerout50us;
+
   htim7.Instance = TIM7;
   htim7.Init.Prescaler = (HAL_RCC_GetPCLK1Freq() / 1000000) - 1;
   htim7.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim7.Init.Period = 50 - 1;
-  
-  timeout = usTim1Timerout50us;
+  htim7.Init.Period = (50 - 1) * usTim1Timerout50us;
   
   if (HAL_TIM_Base_Init(&htim7) != HAL_OK)
   {
@@ -67,17 +65,34 @@ xMBMasterPortTimersInit( USHORT usTim1Timerout50us )
  
 void vMBMasterPortTimersT35Enable()
 {
-
+  LONG timer_tick = (50 - 1) * usT35TimeOut50us;
+    /* Set current timer mode, don't change it.*/
+  vMBMasterSetCurTimerMode(MB_TMODE_T35);
+   __HAL_TIM_SET_AUTORELOAD(&htim7, timer_tick);
+   HAL_TIM_Base_Start_IT(&htim7);
 }
 
-void
-vMBMasterPortTimersEnable(  )
+void vMBMasterPortTimersConvertDelayEnable()
 {
-  /* Enable the timer with the timeout passed to xMBPortTimersInit( ) */
-  downcounter = timeout;
-  HAL_TIM_Base_Start_IT(&htim7);
+    LONG timer_tick = MB_MASTER_DELAY_MS_CONVERT;
+
+    /* Set current timer mode, don't change it.*/
+    vMBMasterSetCurTimerMode(MB_TMODE_CONVERT_DELAY);
+
+     __HAL_TIM_SET_AUTORELOAD(&htim7, timer_tick);
+    HAL_TIM_Base_Start_IT(&htim7);
 }
- 
+
+void vMBMasterPortTimersRespondTimeoutEnable()
+{
+    LONG timer_tick = MB_MASTER_TIMEOUT_MS_RESPOND ;
+  
+    /* Set current timer mode, don't change it.*/
+    vMBMasterSetCurTimerMode(MB_TMODE_RESPOND_TIMEOUT);
+     __HAL_TIM_SET_AUTORELOAD(&htim7, timer_tick);
+    HAL_TIM_Base_Start_IT(&htim7);
+}
+
 void
 vMBMasterPortTimersDisable(  )
 {
@@ -88,11 +103,12 @@ vMBMasterPortTimersDisable(  )
 /* Create an ISR which is called whenever the timer has expired. This function
 * must then call pxMBPortCBTimerExpired( ) to notify the protocol stack that
 * the timer has expired.
- 
-static void prvvTIMERExpiredISR( void )
-{
-( void )pxMBPortCBTimerExpired(  );
-}
-*/
+ */
+
+//static void prvvTIMERExpiredISR( void )
+//{
+//( void )pxMBMasterPortCBTimerExpired(  );
+//}
+
 
 #endif /* MB_MASTER_RTU_ENABLED */

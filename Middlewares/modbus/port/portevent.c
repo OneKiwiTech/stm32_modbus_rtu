@@ -26,6 +26,7 @@
 #include "FreeRTOS.h"
 #include "event_groups.h"
 
+#if MB_SLAVE_RTU_ENABLED > 0
 /* ----------------------- Variables ----------------------------------------*/
 static EventGroupHandle_t xSlaveOsEvent_h;
 static StaticEventGroup_t xSlaveOsEventGroup;
@@ -42,7 +43,7 @@ xMBPortEventInit( void )
 BOOL
 xMBPortEventPost( eMBEventType eEvent )
 {
-    xEventGroupSetBits(&xSlaveOsEventGroup, eEvent);
+    xEventGroupSetBits(xSlaveOsEvent_h, eEvent);
     return TRUE;
 }
 
@@ -50,10 +51,10 @@ BOOL
 xMBPortEventGet( eMBEventType * eEvent )
 {
     EventBits_t uxBits;
-    const TickType_t xTicksToWait = 100 / portTICK_PERIOD_MS;
+    const TickType_t xTicksToWait = 0xFFFFFFFF;
 
     /* waiting forever OS event */
-    uxBits  = xEventGroupWaitBits(&xSlaveOsEventGroup,
+    uxBits  = xEventGroupWaitBits(xSlaveOsEvent_h,
             EV_READY | EV_FRAME_RECEIVED | EV_EXECUTE | EV_FRAME_SENT,
             pdTRUE,
             pdFALSE,
@@ -73,3 +74,5 @@ xMBPortEventGet( eMBEventType * eEvent )
     
     return TRUE;
 }
+
+#endif /* MB_SLAVE_RTU_ENABLED */

@@ -27,10 +27,10 @@
 
 #include "mbconfig.h"
 
-#if MB_MASTER_RTU_ENABLED
+#if MB_MASTER_RTU_ENABLED > 0
 /* ----------------------- static functions ---------------------------------*/
-//static void prvvUARTTxReadyISR( void );
-//static void prvvUARTRxISR( void );
+static void prvvUARTTxReadyISR( void );
+static void prvvUARTRxISR( void );
  
 /* -----------------------    variables     ---------------------------------*/
 extern UART_HandleTypeDef huart2;
@@ -66,13 +66,18 @@ xMBMasterPortSerialInit( UCHAR ucPORT, ULONG ulBaudRate, UCHAR ucDataBits, eMBPa
   return TRUE;
 }
  
+void vMBMasterPortClose(void)
+{
+  
+}
+
 BOOL
 xMBMasterPortSerialPutByte( CHAR ucByte )
 {
   /* Put a byte in the UARTs transmit buffer. This function is called
   * by the protocol stack if pxMBFrameCBTransmitterEmpty( ) has been
   * called. */
-  return (HAL_OK == HAL_UART_Transmit(&huart2, (uint8_t*)&ucByte, 1, 10));
+  return (HAL_OK == HAL_UART_Transmit(&huart2, (uint8_t*)&ucByte, 1, 1000));
 }
  
 BOOL
@@ -90,22 +95,22 @@ xMBMasterPortSerialGetByte( CHAR * pucByte )
 * call pxMBFrameCBTransmitterEmpty( ) which tells the protocol stack that
 * a new character can be sent. The protocol stack will then call 
 * xMBPortSerialPutByte( ) to send the character.
- 
-static void prvvUARTTxReadyISR( void )
-{
-pxMBFrameCBTransmitterEmpty(  );
-}
-*/
+ */
+//static void prvvUARTTxReadyISR( void )
+//{
+//  pxMBFrameCBTransmitterEmpty(  );
+//}
+
  
 /* Create an interrupt handler for the receive interrupt for your target
 * processor. This function should then call pxMBFrameCBByteReceived( ). The
 * protocol stack will then call xMBPortSerialGetByte( ) to retrieve the
 * character.
- 
-static void prvvUARTRxISR( void )
-{
-pxMBFrameCBByteReceived(  );
-}
-*/
+ */
+//static void prvvUARTRxISR( void )
+//{
+//pxMBFrameCBByteReceived(  );
+//}
+
 
 #endif /* MB_MASTER_RTU_ENABLED */

@@ -43,6 +43,7 @@
 #include "mbcrc.h"
 #include "mbport.h"
 
+#if MB_SLAVE_RTU_ENABLED > 0
 /* ----------------------- Defines ------------------------------------------*/
 #define MB_SER_PDU_SIZE_MIN     4       /*!< Minimum size of a Modbus RTU frame. */
 #define MB_SER_PDU_SIZE_MAX     256     /*!< Maximum size of a Modbus RTU frame. */
@@ -369,3 +370,5 @@ xMBRTUTimerT35Expired( void )
 
     return xNeedPoll;
 }
+
+#endif /* MB_SLAVE_RTU_ENABLED */
