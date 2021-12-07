@@ -145,7 +145,7 @@ int main(void)
 
 #if MB_MASTER_RTU_ENABLED > 0
   ModbusMasterStackInit();
-  osThreadDef(mbMasterTask, ModbusMasterRTUTask, osPriorityNormal + 1, 0, configMINIMAL_STACK_SIZE + 128);
+  osThreadDef(mbMasterTask, ModbusMasterRTUTask, osPriorityNormal, 0, configMINIMAL_STACK_SIZE + 128);
   mbMasterPollTask_h = osThreadCreate(osThread(mbMasterTask), NULL);
 
   osThreadDef(mbMasterUserTask, ModbusMasterUserRTUTask, osPriorityNormal, 0, configMINIMAL_STACK_SIZE + 128);

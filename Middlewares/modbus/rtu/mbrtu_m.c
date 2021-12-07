@@ -297,6 +297,11 @@ xMBMasterRTUReceiveFSM( void )
     return xTaskNeedSwitch;
 }
 
+BOOL xMBMasterIsReady( void )
+{
+    return ( eRcvState == STATE_M_RX_IDLE );
+}
+
 BOOL
 xMBMasterRTUTransmitFSM( void )
 {

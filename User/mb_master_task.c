@@ -46,8 +46,13 @@ void ModbusMasterUserRTUTask(void const * argument)
   eMBMasterReqErrCode    errorCode = MB_MRE_NO_ERR;
   uint16_t errorCount = 0;
 
+  /* Wait modbus stack is ready */
+  while ( !xMBMasterIsReady() )
+  {
+      osDelay(100);
+  }
+  
   while(1) {
-	osDelay(1000);
     usModbusUserData[0] = (USHORT)(1);
     usModbusUserData[1] = (USHORT)(2);
     ucModbusUserData[0] = 0x1F;    
@@ -55,6 +60,7 @@ void ModbusMasterUserRTUTask(void const * argument)
     if (errorCode != MB_MRE_NO_ERR) {
         errorCount++;
     }
+    osDelay(3000);
   }
 }
 
