@@ -62,7 +62,7 @@ xMBMasterPortTimersInit( USHORT usTim1Timerout50us )
   
   return TRUE;
 }
- 
+ /*TODO: stop before restart T35 timer */
 void vMBMasterPortTimersT35Enable()
 {
   LONG timer_tick = (50 - 1) * usT35TimeOut50us;
@@ -83,6 +83,7 @@ void vMBMasterPortTimersConvertDelayEnable()
     HAL_TIM_Base_Start_IT(&htim7);
 }
 
+/* User defined */
 void vMBMasterPortTimersRespondTimeoutEnable()
 {
     LONG timer_tick = MB_MASTER_TIMEOUT_MS_RESPOND ;

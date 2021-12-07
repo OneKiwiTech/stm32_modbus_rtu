@@ -144,7 +144,7 @@ eMBMasterInit( eMBMode eMode, UCHAR ucPort, ULONG ulBaudRate, eMBParity eParity 
     {
 #if MB_MASTER_RTU_ENABLED > 0
     case MB_RTU:
-        pvMBMasterFrameStartCur = eMBMasterRTUStart;
+        pvMBMasterFrameStartCur = eMBMasterRTUStart; /* pvMBMasterFrameStartCur -> function pointer*/
         pvMBMasterFrameStopCur = eMBMasterRTUStop;
         peMBMasterFrameSendCur = eMBMasterRTUSend;
         peMBMasterFrameReceiveCur = eMBMasterRTUReceive;

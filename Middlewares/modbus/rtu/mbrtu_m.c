@@ -332,7 +332,7 @@ xMBMasterRTUTransmitFSM( void )
              * else master will enable timer of respond timeout. */
             if ( xFrameIsBroadcast == TRUE )
             {
-                vMBMasterPortTimersConvertDelayEnable( );
+                vMBMasterPortTimersConvertDelayEnable( ); /* Turnaround delay */
             }
             else
             {

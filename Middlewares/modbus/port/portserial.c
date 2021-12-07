@@ -82,6 +82,7 @@ xMBPortSerialSendBuffer( CHAR* ucBytePtr, ULONG ulBufferLen )
   return (HAL_OK == HAL_UART_Transmit_DMA(&huart2, (uint8_t*)ucBytePtr, ulBufferLen));
 }
 
+/*TODO: can be replaced by Queue mechanism*/
 BOOL
 xMBPortSerialGetByte( CHAR * pucByte )
 {

@@ -39,6 +39,7 @@ xMBPortTimersInit( USHORT usTim1Timerout50us )
 {
   TIM_MasterConfigTypeDef sMasterConfig;
   
+  /*Tick: 50uS */
   htim7.Instance = TIM7;
   htim7.Init.Prescaler = (HAL_RCC_GetPCLK1Freq() / 1000000) - 1;
   htim7.Init.CounterMode = TIM_COUNTERMODE_UP;
